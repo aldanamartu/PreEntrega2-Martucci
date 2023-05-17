@@ -7,6 +7,7 @@ const productos = [
 ];
 
 let carrito = [];
+let precio = 0;
 
 // imprimo productos en el DOM
 productos.forEach(item => {
@@ -23,7 +24,6 @@ productos.forEach(item => {
     // funcion que agrega productos al carrito
     producto.addEventListener("click", (event) => {
         event.preventDefault();
-        console.log(carrito);
 
         let idProducto = event.target.value;
 
@@ -35,7 +35,6 @@ productos.forEach(item => {
             let elementoCarrito = JSON.parse(JSON.stringify(producto[0]));
             elementoCarrito.index = carrito.length;
             carrito.push(elementoCarrito);
-            let carritoElement = document.getElementById("carrito");
             let itemCarrito = document.createElement("item-carrito");
             itemCarrito.setAttribute("id", `item-${elementoCarrito.index}`);
             itemCarrito.innerHTML = `
@@ -45,19 +44,35 @@ productos.forEach(item => {
             <button id="eliminar${elementoCarrito.id}" value="${elementoCarrito.index}">Eliminar del carrito</button>
             `;
 
+            let carritoElement = document.getElementById("carrito");
             carritoElement.append(itemCarrito);
 
             console.log("CARRITO CON PRODUCTO AGREGADO: " + JSON.stringify(carrito));
 
+            precio += elementoCarrito.precio;
+            document.getElementById("precio").innerHTML = precio;
+            console.log("PRECIO: " + precio);
 
             itemCarrito.addEventListener("click", (event) => {
                 event.preventDefault();
                 let index = parseInt(event.target.value);
+
+                //busco el producto a borrar
+                let carritoElement = carrito.filter(function (item) {
+                    return item.index == index;
+                });
+                let element = JSON.parse(JSON.stringify(carritoElement[0]));
+
                 // borro elemento del carrito por indice
                 carrito = carrito.filter(i => i.index !== index);
                 console.log("CARRITO DESPUES DE BORRAR: " + JSON.stringify(carrito));
                 // borro element del carrito por indice en el html
                 document.getElementById(`item-${index}`).remove();
+
+                // actualizo el precio del carrito
+                precio -= element.precio;
+                document.getElementById("precio").innerHTML = precio;
+                console.log("PRECIO: " + precio);
             });
 
         }
