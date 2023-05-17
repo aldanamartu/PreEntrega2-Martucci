@@ -22,37 +22,40 @@ productos.forEach(item => {
 
     // funcion que agrega productos al carrito
     producto.addEventListener("click", (event) => {
+        event.preventDefault();
         console.log(carrito);
 
         let idProducto = event.target.value;
 
-        let elemento = productos.filter(function (item) {
+        let producto = productos.filter(function (item) {
             return item.id == idProducto;
         });
 
-        if (elemento) {
-            let elementoCarrito = elemento[0];
+        if (producto) {
+            let elementoCarrito = JSON.parse(JSON.stringify(producto[0]));
             elementoCarrito.index = carrito.length;
             carrito.push(elementoCarrito);
-            console.log("CARRITO: " + JSON.stringify(carrito));
-            console.log(carrito);
             let carritoElement = document.getElementById("carrito");
             let itemCarrito = document.createElement("item-carrito");
-            itemCarrito.setAttribute("id", `item-${item.index}`);
+            itemCarrito.setAttribute("id", `item-${elementoCarrito.index}`);
             itemCarrito.innerHTML = `
-            <h3>ID: ${item.id}</h3>
-            <p>Nombre: ${item.nombre}</p>
-            <b>$${item.precio}</b>
-            <button id="eliminar${item.id}" value="${item.index}">Eliminar del carrito</button>
+            <h3>ID: ${elementoCarrito.id}</h3>
+            <p>Nombre: ${elementoCarrito.nombre}</p>
+            <b>$${elementoCarrito.precio}</b>
+            <button id="eliminar${elementoCarrito.id}" value="${elementoCarrito.index}">Eliminar del carrito</button>
             `;
 
             carritoElement.append(itemCarrito);
 
+            console.log("CARRITO CON PRODUCTO AGREGADO: " + JSON.stringify(carrito));
+
+
             itemCarrito.addEventListener("click", (event) => {
+                event.preventDefault();
                 let index = parseInt(event.target.value);
                 // borro elemento del carrito por indice
                 carrito = carrito.filter(i => i.index !== index);
-                console.log("CARRITO: " + JSON.stringify(carrito));
+                console.log("CARRITO DESPUES DE BORRAR: " + JSON.stringify(carrito));
                 // borro element del carrito por indice en el html
                 document.getElementById(`item-${index}`).remove();
             });
